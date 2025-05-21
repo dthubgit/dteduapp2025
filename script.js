@@ -1,41 +1,37 @@
 const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxXcxnE66Zyacuf0XbEkYk7x0OXr-mhABqAsWAK_5jqtsYJ7OVXcA-vJD26ZVHDTBbC/exec';
 
-window.onload = () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const tableBody = document.getElementById("applicantsTableBody");
+  const statusText = document.getElementById("statusText");
+
   fetch(SHEET_API_URL)
-    .then(res => res.json())
-    .then(applicants => {
-      const container = document.getElementById("tableContainer");
-      if (!applicants || applicants.length === 0) {
-        container.innerText = "No data found.";
+    .then(response => response.json())
+    .then(data => {
+      if (data.length === 0) {
+        statusText.textContent = "No data found.";
         return;
       }
 
-      const table = document.createElement("table");
-      const headers = Object.keys(applicants[0]);
+      // Clear "Loading..." text
+      statusText.textContent = "";
 
-      const thead = document.createElement("thead");
-      const headRow = document.createElement("tr");
-      headers.forEach(h => {
-        const th = document.createElement("th");
-        th.textContent = h;
-        headRow.appendChild(th);
-      });
-      thead.appendChild(headRow);
-      table.appendChild(thead);
-
-      const tbody = document.createElement("tbody");
-      applicants.forEach(app => {
+      data.forEach((applicant, index) => {
         const row = document.createElement("tr");
-        headers.forEach(h => {
-          const td = document.createElement("td");
-          td.textContent = app[h];
-          row.appendChild(td);
-        });
-        tbody.appendChild(row);
-      });
 
-      table.appendChild(tbody);
-      container.innerHTML = '';
-      container.appendChild(table);
+        row.innerHTML = `
+          <td class="border px-2 py-1">${index + 1}</td>
+          <td class="border px-2 py-1">${applicant.Name || ''}</td>
+          <td class="border px-2 py-1">${applicant["Gender"] || ''}</td>
+          <td class="border px-2 py-1">${applicant["City / District"] || ''}</td>
+          <td class="border px-2 py-1">${applicant["Course"] || ''}</td>
+          <td class="border px-2 py-1">${applicant["Current year fees? தற்போதைய வருடத்திற்கான கல்லூரிக் கட்டணம்?"] || ''}</td>
+        `;
+
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error("Error loading data:", error);
+      statusText.textContent = "Error loading data.";
     });
-};
+});
