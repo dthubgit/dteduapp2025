@@ -1,49 +1,44 @@
-document.getElementById("querySelect").addEventListener("change", function() {
-  const selectedQuery = this.value;
-  const resultElem = document.getElementById("queryResult");
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxXcxnE66Zyacuf0XbEkYk7x0OXr-mhABqAsWAK_5jqtsYJ7OVXcA-vJD26ZVHDTBbC/exec';
 
-  // Clear previous result
-  resultElem.textContent = "Calculating...";
+let applicantsData = [];
 
-  fetch(https://script.google.com/macros/s/AKfycbxXcxnE66Zyacuf0XbEkYk7x0OXr-mhABqAsWAK_5jqtsYJ7OVXcA-vJD26ZVHDTBbC/exec)
-    .then(res => res.json())
+document.addEventListener("DOMContentLoaded", () => {
+  const tableBody = document.getElementById("applicantsTableBody");
+  const statusText = document.getElementById("statusText");
+  const filterDropdown = document.getElementById("deepamHelpFilter");
+
+  fetch(SHEET_API_URL)
+    .then(response => response.json())
     .then(data => {
-      let count = 0;
-
-      switch(selectedQuery) {
-        case "countMale":
-          count = data.filter(app => app.Gender?.toLowerCase() === 'male').length;
-          resultElem.textContent = `Number of Males: ${count}`;
-          break;
-
-        case "countFemale":
-          count = data.filter(app => app.Gender?.toLowerCase() === 'female').length;
-          resultElem.textContent = `Number of Females: ${count}`;
-          break;
-
-        case "lostFather":
-          // Assuming you have a field that indicates if father is lost, e.g. "Father Status" = "Deceased"
-          count = data.filter(app => app["Father Status"]?.toLowerCase() === 'deceased').length;
-          resultElem.textContent = `Applicants who lost Father: ${count}`;
-          break;
-
-        case "lostMother":
-          // Assuming similar field for mother
-          count = data.filter(app => app["Mother Status"]?.toLowerCase() === 'deceased').length;
-          resultElem.textContent = `Applicants who lost Mother: ${count}`;
-          break;
-
-        case "lostBoth":
-          count = data.filter(app => app["Father Status"]?.toLowerCase() === 'deceased' && app["Mother Status"]?.toLowerCase() === 'deceased').length;
-          resultElem.textContent = `Applicants who lost both Father and Mother: ${count}`;
-          break;
-
-        default:
-          resultElem.textContent = "";
-      }
+      applicantsData = data;
+      statusText.textContent = "";
+      renderTable(applicantsData);
     })
-    .catch(err => {
-      resultElem.textContent = "Error fetching data.";
-      console.error(err);
+    .catch(error => {
+      console.error("Error fetching data:", error);
+      statusText.textContent = "Error loading data.";
     });
+
+  filterDropdown.addEventListener("change", () => {
+    const selected = filterDropdown.value;
+    const filtered = selected
+      ? applicantsData.filter(app => (app["Have you received Deepam’s Educational Help?"] || "").trim() === selected)
+      : applicantsData;
+    renderTable(filtered);
+  });
+
+  function renderTable(data) {
+    tableBody.innerHTML = "";
+    data.forEach((applicant, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="border px-2 py-1">${index + 1}</td>
+        <td class="border px-2 py-1">${applicant.Name || ''}</td>
+        <td class="border px-2 py-1">${applicant.Gender || ''}</td>
+        <td class="border px-2 py-1">${applicant.Course || ''}</td>
+        <td class="border px-2 py-1">${applicant["Have you received Deepam’s Educational Help?"] || ''}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
 });
