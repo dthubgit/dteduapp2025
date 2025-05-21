@@ -1,4 +1,4 @@
-const SHEET_API_URL = 'YOUR_WEB_APP_URL_HERE';
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzRWnkguLEW5N--3Qg-VB22W7D7SG53K5UhIY5pinA/dev';
 
 window.onload = () => {
   fetch(SHEET_API_URL)
