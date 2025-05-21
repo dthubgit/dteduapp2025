@@ -5,7 +5,7 @@ document.getElementById("querySelect").addEventListener("change", function() {
   // Clear previous result
   resultElem.textContent = "Calculating...";
 
-  fetch(SHEET_API_URL)
+  fetch(https://script.google.com/macros/s/AKfycbxXcxnE66Zyacuf0XbEkYk7x0OXr-mhABqAsWAK_5jqtsYJ7OVXcA-vJD26ZVHDTBbC/exec)
     .then(res => res.json())
     .then(data => {
       let count = 0;
