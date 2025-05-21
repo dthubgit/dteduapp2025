@@ -84,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
           <td class="border px-2 py-1">${applicant["Declaration :"] || ''}</td>
           <td class="border px-2 py-1">${applicant["Email address"] || ''}</td>
           <td class="border px-2 py-1">${applicant["Ration Card / குடும்ப அட்டை"] || ''}</td>
-          <td class="border px-2 py-1">${applicant["Please click the link below to open and read the instructions carefully."] || ''}</td>
         `;
 
         tableBody.appendChild(row);
